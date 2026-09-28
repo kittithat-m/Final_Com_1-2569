@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบสอบปลายภาคออนไลน์ (รอบตกค้าง) - โรงเรียนหอวัง ปทุมธานี</title>
+  <meta name="description" content="ระบบสอบปลายภาคออนไลน์ รายวิชา ว31281 การออกแบบและเทคโนโลยี 1 ชั้นมัธยมศึกษาปีที่ 4 โรงเรียนหอวัง ปทุมธานี สำหรับนักเรียนที่สอบไม่ทันเนื่องจากฝนตกหนัก">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="school-brand" onclick="returnToMainScreen()" style="cursor: pointer;">
+        <div class="school-logo-badge">🏫</div>
+        <div class="brand-text">
+          <h1>โรงเรียนหอวัง ปทุมธานี</h1>
+          <p>ข้อสอบปลายภาคเรียนที่ 1/2569 • รายวิชา ว31281 การออกแบบและเทคโนโลยี 1 (ม.4/1 - 4/14)</p>
+        </div>
+      </div>
+
+      <div class="header-status-panel">
+        <div class="rain-badge">
+          🌧️ สอบตกค้าง / ฝนตกหนัก
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-sm" id="btnOpenTeacherPortal" onclick="openTeacherPortal()" style="font-size: 0.82rem; padding: 6px 12px; font-weight: 600; background: #eff6ff; border-color: #93c5fd; color: #1e40af;">
+          🔐 สำหรับครูผู้สอน
+        </button>
+
+        <!-- Live Clock Display (Shown in exam screen) -->
+        <div id="timerContainer" class="timer-container" style="display: none;">
+          <span class="timer-icon">⏳</span>
+          <span class="timer-clock" id="examClock">60:00</span>
+        </div>
+
+        <div id="headerStudentName" style="font-size: 0.85rem; font-weight: 600; color: #1e3a8a; display: none;"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Anti Cheat Tab Switch Warning Banner -->
+  <div id="cheatWarningBanner" style="display: none; background: #fef2f2; border-bottom: 1.5px solid #fecaca; color: #b91c1c; padding: 8px 24px; font-size: 0.88rem; font-weight: 600; text-align: center; justify-content: center; align-items: center; gap: 8px;">
+    ⚠️ ตรวจพบการสลับหน้าจอหรือเปิดแท็บอื่น ขอความกรุณาทำข้อสอบด้วยความซื่อสัตย์
+  </div>
+
+  <main class="main-wrapper">
+    <!-- ===================================================
+         SCREEN 1: WELCOME & STUDENT REGISTRATION
+         =================================================== -->
+    <section id="screenWelcome" class="screen-view active">
+      <div class="welcome-card-container">
+        <div class="welcome-banner-hero">
+          <div class="banner-badge-top">ระบบการสอบปลายภาคออนไลน์ (Online Final Examination System)</div>
+          <h2>ข้อสอบปลายภาคเรียนที่ 1 ปีการศึกษา 2569</h2>
+          <p>รายวิชา ว31281 การออกแบบและเทคโนโลยี 1 • ชั้นมัธยมศึกษาปีที่ 4/1 - 4/14</p>
+          <p style="margin-top: 4px; font-size: 0.85rem; opacity: 0.85;">ผู้ออกข้อสอบ: ครูกนกวรรณ, ครูกิตติธัช | โรงเรียนหอวัง ปทุมธานี</p>
+        </div>
+
+        <div class="exam-meta-grid">
+          <div class="meta-item">
+            <div class="meta-icon">⏱️</div>
+            <div class="meta-info">
+              <small>เวลาในการสอบ</small>
+              <strong>60 นาที</strong>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">📝</div>
+            <div class="meta-info">
+              <small>จำนวนข้อสอบ</small>
+              <strong>36 ข้อ (20 คะแนน)</strong>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">🔘</div>
+            <div class="meta-info">
+              <small>ตอนที่ 1 (ปรนัย 4 ตัวเลือก)</small>
+              <strong>30 ข้อ (10 คะแนน)</strong>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">✍️</div>
+            <div class="meta-info">
+              <small>ตอนที่ 2 (อัตนัย/อัปโหลดผังงาน)</small>
+              <strong>6 ข้อ (10 คะแนน)</strong>
+            </div>
+          </div>
+        </div>
+
+        <form id="registrationForm" class="registration-form-body">
+          <h3 style="font-size: 1.15rem; color: #1e293b; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">
+            👤 ข้อมูลประจำตัวนักเรียน
+          </h3>
+
+          <div class="form-group-grid">
+            <div class="form-field">
+              <label for="studentName">ชื่อ - นามสกุล *</label>
+              <input type="text" id="studentName" class="form-input" placeholder="เช่น นายสมชาย ใจดี" required>
+            </div>
+
+            <div class="form-field">
+              <label for="studentClass">ระดับชั้น / ห้องเรียน *</label>
+              <select id="studentClass" class="form-select" required>
+                <option value="">-- เลือกระดับชั้นห้องเรียน --</option>
+                <option value="4/1">มัธยมศึกษาปีที่ 4/1</option>
+                <option value="4/2">มัธยมศึกษาปีที่ 4/2</option>
+                <option value="4/3">มัธยมศึกษาปีที่ 4/3</option>
+                <option value="4/4">มัธยมศึกษาปีที่ 4/4</option>
+                <option value="4/5">มัธยมศึกษาปีที่ 4/5</option>
+                <option value="4/6">มัธยมศึกษาปีที่ 4/6</option>
+                <option value="4/7">มัธยมศึกษาปีที่ 4/7</option>
+                <option value="4/8">มัธยมศึกษาปีที่ 4/8</option>
+                <option value="4/9">มัธยมศึกษาปีที่ 4/9</option>
+                <option value="4/10">มัธยมศึกษาปีที่ 4/10</option>
+                <option value="4/11">มัธยมศึกษาปีที่ 4/11</option>
+                <option value="4/12">มัธยมศึกษาปีที่ 4/12</option>
+                <option value="4/13">มัธยมศึกษาปีที่ 4/13</option>
+                <option value="4/14">มัธยมศึกษาปีที่ 4/14</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="studentSeatNo">เลขที่ *</label>
+              <input type="number" id="studentSeatNo" class="form-input" placeholder="เช่น 15" min="1" max="60" required>
+            </div>
+
+            <div class="form-field">
+              <label for="studentId">รหัสประจำตัวนักเรียน (5 หลัก) *</label>
+              <input type="text" id="studentId" class="form-input" placeholder="เช่น 45123" maxlength="6" required>
+            </div>
+          </div>
+
+          <div class="form-field" style="margin-bottom: 20px;">
+            <label for="absenceReason">สาเหตุในการขอสอบรอบตกค้าง</label>
+            <input type="text" id="absenceReason" class="form-input" value="ไม่สามารถเดินทางมาสอบตามเวลาปกติได้ เนื่องจากฝนตกหนัก น้ำท่วมเส้นทางสัญจร" readonly>
+          </div>
+
+          <div class="exam-instructions-box">
+            <h4>📌 คำชี้แจงและกติกาการสอบ:</h4>
+            <ul>
+              <li>ข้อสอบฉบับนี้มี 2 ตอน รวมทั้งหมด 36 ข้อ 20 คะแนน กำหนดเวลา 60 นาที</li>
+              <li><strong>ตอนที่ 1 (ปรนัย 30 ข้อ):</strong> ให้นักเรียนเลือกข้อที่ถูกต้องที่สุดเพียงข้อเดียว</li>
+              <li><strong>ตอนที่ 2 (อัตนัย 6 ข้อ):</strong> ให้นักเรียนพิมพ์นิพจน์คำตอบ และเขียนผังงานลงในกระดาษแล้วถ่ายรูป/อัปโหลดส่ง (ข้อ 35-36)</li>
+              <li>ระบบมีการบันทึกคำตอบอัตโนมัติ (Auto Save) ป้องกันปัญหาไฟดับหรืออินเทอร์เน็ตหลุด</li>
+              <li>เมื่อหมดเวลา 60 นาที ระบบจะทำการส่งข้อสอบอัตโนมัติทันที</li>
+            </ul>
+          </div>
+
+          <label class="integrity-check">
+            <input type="checkbox" id="integrityAgreement" required>
+            <span>ข้าพเจ้าขอรับรองว่าจะปฏิบัติตามกฎระเบียบการสอบ และทำข้อสอบด้วยความซื่อสัตย์สุจริตด้วยตนเอง</span>
+          </label>
+
+          <button type="submit" class="btn btn-primary btn-lg">
+            🚀 เริ่มทำข้อสอบ (Start Exam)
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SCREEN 2: ACTIVE EXAMINATION SCREEN
+         =================================================== -->
+    <section id="screenExam" class="screen-view">
+      <div class="exam-workspace-layout">
+        <!-- Main Questions Area -->
+        <div class="exam-questions-column">
+          <!-- Section Tabs (Part 1 vs Part 2) -->
+          <div class="exam-section-tabs">
+            <button type="button" class="section-tab-btn active" data-section="part1">
+              <span>ตอนที่ 1: ปรนัย (ข้อ 1 - 30)</span>
+              <span class="section-tab-badge">30 ข้อ (10 คะแนน)</span>
+            </button>
+            <button type="button" class="section-tab-btn" data-section="part2">
+              <span>ตอนที่ 2: อัตนัย (ข้อ 31 - 36)</span>
+              <span class="section-tab-badge">6 ข้อ (10 คะแนน)</span>
+            </button>
+          </div>
+
+          <!-- Question Cards Container -->
+          <div id="part1Container"></div>
+          <div id="part2Container" style="display: none;"></div>
+
+          <!-- Bottom Navigation / Section Switch Actions -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0; flex-wrap: wrap; gap: 12px;">
+            <button type="button" class="btn btn-secondary" id="btnToggleSection" onclick="toggleExamSection()">
+              🔄 สลับไปทำ ตอนที่ 2 (อัตนัย)
+            </button>
+
+            <button type="button" class="btn btn-success" style="font-size: 1.05rem; padding: 12px 28px;" onclick="confirmSubmit()">
+              📤 ตรวจทานและส่งข้อสอบ
+            </button>
+          </div>
+        </div>
+
+        <!-- Sidebar (Sticky Navigation & Student Profile) -->
+        <aside class="sidebar-sticky-panel">
+          <div class="student-mini-profile">
+            <div class="student-avatar" id="sidebarStudentAvatar">ส</div>
+            <div class="student-details">
+              <h4 id="sidebarStudentName">สมชาย ใจดี</h4>
+              <p id="sidebarStudentClass">ม.4/1 | เลขที่ 1 | รหัส 45123</p>
+            </div>
+          </div>
+
+          <div class="progress-summary-bar">
+            <div class="progress-labels">
+              <span style="font-weight: 600;">ความคืบหน้า:</span>
+              <span id="answeredCountLabel" style="font-weight: 700; color: #2563eb;">0 / 36 ข้อ</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFillBar"></div>
+            </div>
+            <div style="text-align: right; font-size: 0.75rem; color: #64748b; margin-top: 3px;" id="progressPercentLabel">0%</div>
+          </div>
+
+          <div class="palette-legend">
+            <div class="legend-item">
+              <div class="legend-dot dot-answered"></div>
+              <span>ทำแล้ว</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot dot-flagged"></div>
+              <span>ปักหมุด</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot dot-empty"></div>
+              <span>ยังไม่ทำ</span>
+            </div>
+          </div>
+
+          <div class="question-nav-grid" id="questionNavGrid"></div>
+
+          <div class="submit-sidebar-section">
+            <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="confirmSubmit()">
+              🏁 ส่งข้อสอบ (Submit)
+            </button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SCREEN 3: RESULT & REVIEW SCREEN
+         =================================================== -->
+    <section id="screenResult" class="screen-view">
+      <div class="result-card-container">
+        <div class="result-hero">
+          <h2 style="font-size: 1.6rem; margin-bottom: 4px;">🎉 บันทึกการส่งข้อสอบเรียบร้อยแล้ว</h2>
+          <p id="resStudentName" style="font-size: 1.2rem; font-weight: 600; opacity: 0.95;"></p>
+          <p id="resStudentMeta" style="font-size: 0.88rem; opacity: 0.85;"></p>
+          <p id="resSubmitTime" style="font-size: 0.78rem; opacity: 0.8; margin-top: 4px;"></p>
+
+          <div class="score-badge-circle">
+            <div class="score-large-number" id="resTotalScoreLarge">0</div>
+            <div class="score-total-denom">/ 20 คะแนน</div>
+          </div>
+          <small style="opacity: 0.85;">(คะแนนตอนที่ 2 เป็นการตรวจคำตอบเบื้องต้นและรอครูผู้สอนตรวจพิจารณาขั้นสุดท้าย)</small>
+        </div>
+
+        <div class="score-breakdown-grid">
+          <div class="breakdown-item">
+            <h5>ตอนที่ 1 (ปรนัย 30 ข้อ)</h5>
+            <p id="resPart1Score" style="color: #2563eb;">-</p>
+          </div>
+          <div class="breakdown-item">
+            <h5>ตอนที่ 2 (อัตนัย 6 ข้อ)</h5>
+            <p id="resPart2Score" style="color: #059669;">-</p>
+          </div>
+        </div>
+
+        <div class="result-tabs no-print">
+          <button type="button" class="result-tab-btn active" data-tab="part1" onclick="switchResultTab('part1')">
+            🔍 เฉลยและทบทวน ตอนที่ 1 (ปรนัย)
+          </button>
+          <button type="button" class="result-tab-btn" data-tab="part2" onclick="switchResultTab('part2')">
+            ✍️ ตรวจทาน ตอนที่ 2 (อัตนัย)
+          </button>
+          <button type="button" class="result-tab-btn" data-tab="admin" onclick="openTeacherPortal()">
+            📊 แผงควบคุมครูผู้สอน (Teacher Portal)
+          </button>
+        </div>
+
+        <div class="result-tab-content">
+          <div id="resultTabPart1">
+            <div id="reviewPart1List"></div>
+          </div>
+
+          <div id="resultTabPart2" style="display: none;">
+            <div id="reviewPart2List"></div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;" class="no-print">
+            <button type="button" class="btn btn-secondary" onclick="printExamReport()">
+              🖨️ พิมพ์รายงานผลการสอบ (Print / PDF)
+            </button>
+            <button type="button" class="btn btn-primary" onclick="location.reload()">
+              🔄 กลับหน้าหลัก
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SCREEN 4: TEACHER DASHBOARD & GRADING PORTAL
+         =================================================== -->
+    <section id="screenTeacher" class="screen-view">
+      <div class="result-card-container" style="max-width: 1200px;">
+        <div class="welcome-banner-hero" style="background: linear-gradient(135deg, #1e3a8a, #0f172a);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <div class="banner-badge-top">ระบบจัดการและตรวจข้อสอบสำหรับครูผู้สอน (Teacher Management Portal)</div>
+              <h2>แผงควบคุมผลการสอบและตรวจกระดาษคำตอบ</h2>
+              <p>รายวิชา ว31281 การออกแบบและเทคโนโลยี 1 • โรงเรียนหอวัง ปทุมธานี</p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="returnToMainScreen()">
+                🏠 กลับหน้าหลัก / หน้าสอบ
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Stats Grid -->
+        <div class="exam-meta-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <div class="meta-item">
+            <div class="meta-icon" style="background:#eff6ff; color:#2563eb;">👥</div>
+            <div class="meta-info">
+              <small>นักเรียนที่ส่งข้อสอบ</small>
+              <strong id="statTotalStudents" style="font-size: 1.2rem;">0 คน</strong>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon" style="background:#ecfdf5; color:#059669;">📊</div>
+            <div class="meta-info">
+              <small>คะแนนเฉลี่ยรวม</small>
+              <strong id="statAvgScore" style="font-size: 1.2rem; color:#059669;">0 / 20</strong>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon" style="background:#fffbeb; color:#d97706;">🏆</div>
+            <div class="meta-info">
+              <small>คะแนนสูงสุด</small>
+              <strong id="statMaxScore" style="font-size: 1.2rem; color:#d97706;">0</strong>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon" style="background:#fef2f2; color:#dc2626;">📉</div>
+            <div class="meta-info">
+              <small>คะแนนต่ำสุด</small>
+              <strong id="statMinScore" style="font-size: 1.2rem; color:#dc2626;">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div style="padding: 16px 24px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex: 1;">
+            <select id="teacherClassFilter" class="form-select" style="min-width: 170px;" onchange="filterTeacherSubmissions()">
+              <option value="ALL">-- ทุกห้องเรียน (ม.4/1 - 4/14) --</option>
+              <option value="4/1">ม.4/1</option>
+              <option value="4/2">ม.4/2</option>
+              <option value="4/3">ม.4/3</option>
+              <option value="4/4">ม.4/4</option>
+              <option value="4/5">ม.4/5</option>
+              <option value="4/6">ม.4/6</option>
+              <option value="4/7">ม.4/7</option>
+              <option value="4/8">ม.4/8</option>
+              <option value="4/9">ม.4/9</option>
+              <option value="4/10">ม.4/10</option>
+              <option value="4/11">ม.4/11</option>
+              <option value="4/12">ม.4/12</option>
+              <option value="4/13">ม.4/13</option>
+              <option value="4/14">ม.4/14</option>
+            </select>
+
+            <input type="text" id="teacherSearchInput" class="form-input" placeholder="🔍 ค้นหาชื่อ หรือ รหัสนักเรียน..." style="max-width: 260px;" oninput="filterTeacherSubmissions()">
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-success btn-sm" onclick="exportSubmissionsCSV()">
+              📥 ส่งออก Excel (CSV)
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="exportSubmissionsJSON()">
+              💾 สำรองข้อมูล (JSON)
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('importJsonInput').click()">
+              📂 นำเข้าข้อมูล
+            </button>
+            <input type="file" id="importJsonInput" accept=".json" style="display:none;" onchange="importSubmissionsJSON(this)">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+              🖨️ พิมพ์ตาราง
+            </button>
+          </div>
+        </div>
+
+        <!-- Submissions Table Container -->
+        <div style="padding: 20px 24px; overflow-x: auto;">
+          <div id="teacherTableContainer"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================================================
+       MODAL: STUDENT EXAM PAPER & TEACHER GRADING
+       =================================================== -->
+  <div id="studentPaperModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 900px; max-height: 90vh; overflow-y: auto; padding: 24px;">
+      <div class="modal-header" style="justify-content: space-between; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="modal-icon" style="background:#eff6ff; color:#2563eb;">📝</div>
+          <div>
+            <h3 id="modalStudentPaperTitle" style="font-size: 1.2rem; color: #1e293b;">กระดาษคำตอบนักเรียน</h3>
+            <p id="modalStudentPaperMeta" style="font-size: 0.85rem; color: #64748b;"></p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeStudentPaperModal()">✕ ปิด</button>
+      </div>
+
+      <div id="studentPaperContent" style="margin-top: 16px;"></div>
+
+      <div class="modal-actions" style="border-top: 1.5px solid #e2e8f0; padding-top: 16px;">
+        <button type="button" class="btn btn-secondary" onclick="closeStudentPaperModal()">
+          ปิดหน้าต่าง
+        </button>
+        <button type="button" class="btn btn-success" id="btnSaveTeacherGrading" onclick="saveTeacherGradingFromModal()">
+          💾 บันทึกคะแนนที่แก้ไข
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================
+       MODAL: CONFIRM SUBMISSION
+       =================================================== -->
+  <div id="submitConfirmModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon">📤</div>
+        <div>
+          <h3 style="font-size: 1.15rem; color: #1e293b;">ยืนยันการส่งข้อสอบ</h3>
+          <p style="font-size: 0.85rem; color: #64748b;">กรุณาตรวจสอบความถูกต้องก่อนส่งคำตอบ</p>
+        </div>
+      </div>
+
+      <div id="unansweredDetailsText" style="font-size: 0.92rem; color: #334155; margin: 16px 0; padding: 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeSubmitModal()">
+          ย้อนกลับไปทำต่อ
+        </button>
+        <button type="button" class="btn btn-success" onclick="submitExam(false)">
+          ยืนยันส่งข้อสอบทันที
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
